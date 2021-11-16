@@ -1,8 +1,7 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=5 format=2]
 
-[ext_resource path="res://MDFramework/Example/PlayerMP.cs" type="Script" id=1]
+[ext_resource path="res://MDFramework/Example/PlayerMP_Rigid.cs" type="Script" id=1]
 [ext_resource path="res://MDFramework/Example/CameraJoint.cs" type="Script" id=2]
-[ext_resource path="res://assets/3d/testship/testShip.tscn" type="PackedScene" id=3]
 
 [sub_resource type="CapsuleShape" id=1]
 radius = 0.5
@@ -11,7 +10,7 @@ radius = 0.5
 params_diffuse_mode = 4
 albedo_color = Color( 0.0666667, 0.686275, 0.192157, 1 )
 
-[node name="PlayerMP" type="KinematicBody" groups=["Players"]]
+[node name="PlayerMP" type="RigidBody"]
 collision_layer = 8
 collision_mask = 31
 script = ExtResource( 1 )
@@ -36,20 +35,3 @@ script = ExtResource( 2 )
 [node name="Camera" type="Camera" parent="SpringArm"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5 )
 fov = 90.0
-
-[node name="testShip" parent="." instance=ExtResource( 3 )]
-transform = Transform( 0.25, 0, 0, 0, 0.25, 0, 0, 0, 0.25, 0, 2, 0 )
-
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
-
-[node name="HitCounter" type="Label" parent="CanvasLayer"]
-anchor_right = 1.0
-anchor_bottom = 0.124
-margin_left = 898.0
-margin_top = 6.0
-margin_right = -10.0
-margin_bottom = -34.4
-text = "0"
-__meta__ = {
-"_edit_use_anchors_": false
-}

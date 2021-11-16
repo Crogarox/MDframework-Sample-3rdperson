@@ -32,6 +32,10 @@ public class Bullet : RigidBody
     {
         OwnerPeerId = Owner;
     }
+    public void SetOwnerException(Node Owner)
+    {
+        AddCollisionExceptionWith(Owner);
+    }
     public void SetTarget(Vector3 Target)
     {
         LookAt(Target, Vector3.Up);
@@ -45,9 +49,16 @@ public class Bullet : RigidBody
             Connect(nameof(DealDamage), body, "UpdateHealth");
             EmitSignal(nameof(DealDamage), damage);
         }
-        if (body.HasMethod("hit"))
+        if (body.HasMethod("Hit"))
         {
-            body.Call("hit");
+            body.Call("Hit");
+        }
+        else if(body.GetParent().Name.Contains("Player") || body.Name.Contains("Player"))
+        {
+            if (body.HasMethod("Hit"))
+            {
+                body.Call("Hit");
+            }
         }
 
         Spatial newSparks = (Spatial)sparks.Instance();

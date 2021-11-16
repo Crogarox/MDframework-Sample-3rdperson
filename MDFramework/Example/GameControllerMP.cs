@@ -31,16 +31,17 @@ public class GameControllerMP : Spatial
 
     protected void SpawnPlayer(int PeerId)
     {
-        //var rng = new RandomNumberGenerator();
-        //float my_random_number = rng.RandfRange(0, 10);
-        this.SpawnNetworkedNode(GetPlayerScene(), "Player", PeerId);
-        //this.SpawnNetworkedNode(GetPlayerScene(), "Player" , PeerId, (new Vector3(my_random_number *2, 3, my_random_number *2)));
+        var rng = new RandomNumberGenerator();
+        float my_random_number = rng.RandfRange(-10, 10);
+        //this.SpawnNetworkedNode(GetPlayerScene(), "Player", PeerId);
+        this.SpawnNetworkedNode(GetPlayerScene(), "Player" , PeerId, new Vector3(my_random_number *2, 3, my_random_number *2));
     }
 
     private String GetPlayerScene()
     {
         // This is to avoid needing references
         return "res://MDFramework/Example/PlayerMP.tscn";
+        //return "res://MDFramework/Example/PlayerMP_Rigid.tscn";
     }
 
     protected virtual void OnPlayerLeftEvent(int PeerId)
