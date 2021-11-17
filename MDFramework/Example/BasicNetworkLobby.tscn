@@ -1,18 +1,10 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://MDFramework/Example/BasicNetworkLobby.cs" type="Script" id=1]
 [ext_resource path="res://MDFramework/Example/SyncInterface.tscn" type="PackedScene" id=2]
 [ext_resource path="res://MDFramework/Example/GameControllerMP.cs" type="Script" id=3]
 [ext_resource path="res://MDFramework/Example/PeerSynchStatusRow.tscn" type="PackedScene" id=4]
-
-[sub_resource type="SpatialMaterial" id=1]
-albedo_color = Color( 0.0313726, 0.403922, 0, 1 )
-
-[sub_resource type="BoxShape" id=3]
-extents = Vector3( 200, 1, 200 )
-
-[sub_resource type="SpatialMaterial" id=2]
-albedo_color = Color( 0.00392157, 0.184314, 0.443137, 1 )
+[ext_resource path="res://MDFramework/Example/Worldz.tscn" type="PackedScene" id=5]
 
 [node name="BasicNetworkLobby" type="Node2D"]
 script = ExtResource( 1 )
@@ -115,32 +107,60 @@ __meta__ = {
 [node name="PeerSynchStatusRow" parent="." instance=ExtResource( 4 )]
 rect_pivot_offset = Vector2( -160, 801 )
 
-[node name="CSGBox" type="CSGBox" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -5.07703, 0 )
-width = 200.0
-height = 0.25
-depth = 200.0
-material = SubResource( 1 )
-
-[node name="StaticBody" type="StaticBody" parent="CSGBox"]
-
-[node name="CollisionShape" type="CollisionShape" parent="CSGBox/StaticBody"]
-shape = SubResource( 3 )
-
-[node name="CSGBox2" type="CSGBox" parent="."]
-width = 0.25
-height = 25.0
-depth = 0.25
-material = SubResource( 2 )
-
 [node name="GameControllerMP" type="Spatial" parent="."]
 script = ExtResource( 3 )
 
 [node name="OmniLight" type="OmniLight" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 36.5474, 0 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -22.5555, 37.579, -113.844 )
 light_color = Color( 0.266667, 0.788235, 0.843137, 1 )
-light_energy = 2.0
-light_indirect_energy = 2.0
+light_energy = 5.0
+light_indirect_energy = 3.0
+light_bake_mode = 2
+
+[node name="OmniLight2" type="OmniLight" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 18.9449, 35.1532, -161.879 )
+light_color = Color( 0.266667, 0.788235, 0.843137, 1 )
+light_energy = 5.0
+light_indirect_energy = 3.0
+light_bake_mode = 2
+
+[node name="OmniLight3" type="OmniLight" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 16.505, 35.1532, -234.173 )
+light_color = Color( 0.266667, 0.788235, 0.843137, 1 )
+light_energy = 5.0
+light_indirect_energy = 3.0
+light_bake_mode = 2
+
+[node name="OmniLight4" type="OmniLight" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 58.5103, 35.1532, -156 )
+light_color = Color( 0.266667, 0.788235, 0.843137, 1 )
+light_energy = 5.0
+light_indirect_energy = 3.0
+light_bake_mode = 2
+
+[node name="OmniLight5" type="OmniLight" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 147.005, 35.1532, -156 )
+light_color = Color( 0.266667, 0.788235, 0.843137, 1 )
+light_energy = 5.0
+light_indirect_energy = 3.0
+light_bake_mode = 2
+
+[node name="OmniLight6" type="OmniLight" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 346.968, 35.1532, -156 )
+light_color = Color( 0.266667, 0.788235, 0.843137, 1 )
+light_energy = 5.0
+light_indirect_energy = 3.0
+light_bake_mode = 2
+
+[node name="OmniLight7" type="OmniLight" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 88.7405, 35.1532, -107.274 )
+light_color = Color( 0.266667, 0.788235, 0.843137, 1 )
+light_energy = 5.0
+light_indirect_energy = 3.0
+light_bake_mode = 2
+
+[node name="Worldz" parent="." instance=ExtResource( 5 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -60.6645, -65.6712, -66.3477 )
 
 [connection signal="pressed" from="CanvasLayer/CenterContainer/ParentGrid/CenterContainer/GridContainer/BtnSinglePlayer" to="." method="OnSinglePlayerPressed"]
 [connection signal="pressed" from="CanvasLayer/CenterContainer/ParentGrid/CenterContainer/GridContainer/BtnHost" to="." method="OnHostPressed"]

@@ -194,7 +194,7 @@ public class PlayerMP_Rigid : RigidBody
                 //var cam = GetNode<Godot.Camera>("SpringArm/Camera");
                 var mouseposition = GetViewport().GetMousePosition();
                 var from = cammy.ProjectRayOrigin(mouseposition);
-                var to = from + cammy.ProjectRayNormal(mouseposition) * 10f;
+                var to = from + cammy.ProjectRayNormal(mouseposition) * 100f;
                 var tranformz = this.GlobalTransform;
                 tranformz.origin = to;
 

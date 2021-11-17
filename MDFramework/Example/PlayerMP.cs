@@ -20,7 +20,7 @@ public class PlayerMP : KinematicBody
     public const string PLAYER_GROUP = "PLAYERS";
 
     [Export]
-    public float MaxSpeed = 550f;
+    public float MaxSpeed = 2550f;
 
     [Export]
     public float Acceleration = 2000f;
@@ -68,13 +68,15 @@ public class PlayerMP : KinematicBody
     protected String RsetTest = "";
     //public const float moveSpeed = 500f;
     //public const float maxSpeed = 1000.0f;
-    public const float moveSpeed = 250f; //Default was 100f
-    public const float maxSpeed = 100.0f;//Default was 50f
+    public const float moveSpeed = 500f; //Default was 100f
+    public const float maxSpeed = 3000.0f;//Default was 50f
     public const float gravity = 0f;//Default was -25.0f
     public float rotationx = 0.0f;
     public Camera cammy;
     public float mouseY = 0.0f;
     public static float MouseLastY = 0.0f;
+    public PackedScene prebullet;
+    public Sprite3D crosshair3d;
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
@@ -88,6 +90,9 @@ public class PlayerMP : KinematicBody
 
         if (IsLocalPlayer)
         {
+            prebullet = GetBulletScene();
+            crosshair3d = GetNode<Sprite3D>("Crosshair3d");
+
             HitCounter = GetNode<Godot.Label>("CanvasLayer/HitCounter");
             RandomNumberGenerator rnd = new RandomNumberGenerator();
             rnd.Randomize();
@@ -148,9 +153,9 @@ public class PlayerMP : KinematicBody
     {
         if (Target != Vector3.Zero)
         {
-            Bullet bullet = (Bullet)GetBulletScene().Instance();
+            Bullet bullet = (Bullet)prebullet.Instance();
             var bulletGlobalTransform = GlobalTransform;
-            bulletGlobalTransform.origin = GlobalTransform.origin + Vector3.Up;
+            bulletGlobalTransform.origin = GlobalTransform.origin;
             bullet.GlobalTransform = bulletGlobalTransform;
             //bullet.GlobalPosition = GlobalPosition;
             //bullet.GlobalPosition = GlobalPosition;
@@ -374,9 +379,10 @@ public class PlayerMP : KinematicBody
                 }
             }
         }
+        //GD.Print("----- | " + FB + " " + (Ymove + (Input.GetActionStrength("move_up") - Input.GetActionStrength("move_down"))));
         return new Vector3(
             LR,
-            Ymove + (Input.GetActionStrength("move_up") - Input.GetActionStrength("move_down")),//Input.GetActionStrength("move_up") - Input.GetActionStrength("move_down"),//0.0f,
+            (Ymove) + (Input.GetActionStrength("move_up") - Input.GetActionStrength("move_down")),//Input.GetActionStrength("move_up") - Input.GetActionStrength("move_down"),//0.0f,
             FB
             ).Normalized();
     }
@@ -405,7 +411,7 @@ public class PlayerMP : KinematicBody
             velocityNew = velocityNew.Normalized() * maxSpeed;
         }
         // override because start value is 0.0f
-        velocityNew.y = velocityCurrent.y + gravity * delta;
+       // velocityNew.y = velocityCurrent.y + gravity * delta;
 
         return velocityNew;
     }

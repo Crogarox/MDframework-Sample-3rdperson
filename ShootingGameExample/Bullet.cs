@@ -7,7 +7,7 @@ public class Bullet : RigidBody
     [Export]
     public int damage = -1;
     [Export]
-    public float speed = 15;
+    public float speed = 200;
     [Export]
     public float lifetime = 15;
     [Signal]

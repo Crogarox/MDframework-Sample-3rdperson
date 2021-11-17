@@ -34,7 +34,7 @@ public class GameControllerMP : Spatial
         var rng = new RandomNumberGenerator();
         float my_random_number = rng.RandfRange(-10, 10);
         //this.SpawnNetworkedNode(GetPlayerScene(), "Player", PeerId);
-        this.SpawnNetworkedNode(GetPlayerScene(), "Player" , PeerId, new Vector3(my_random_number *2, 3, my_random_number *2));
+        this.SpawnNetworkedNode(GetPlayerScene(), "Player" , PeerId, new Vector3(my_random_number *150, 3, my_random_number *150));
     }
 
     private String GetPlayerScene()
