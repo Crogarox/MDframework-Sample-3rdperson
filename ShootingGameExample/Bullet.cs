@@ -7,7 +7,7 @@ public class Bullet : RigidBody
     [Export]
     public int damage = -1;
     [Export]
-    public float speed = 75;
+    public float speed = 55;
     [Export]
     public float lifetime = 15;
     [Signal]
@@ -41,6 +41,7 @@ public class Bullet : RigidBody
         LookAt(Target, Vector3.Up);
         MovementDirection = (Target - GlobalTransform.origin).Normalized();
     }
+
     private void _OnCollisionEnter(Node body)
     {
 
@@ -60,11 +61,9 @@ public class Bullet : RigidBody
                 body.Call("Hit");
             }
         }
-
         Spatial newSparks = (Spatial)sparks.Instance();
-        newSparks.Translation = Translation;
+        newSparks.Translation = Translation;//Translation;
         GetTree().Root.AddChild(newSparks);
-
         //newSparks.Rotation = Rotation;
         QueueFree();
     }

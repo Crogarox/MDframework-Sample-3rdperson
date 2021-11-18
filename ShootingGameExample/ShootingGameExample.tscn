@@ -18,5 +18,5 @@ __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="GameControllerMP" parent="." index="6"]
+[node name="GameControllerMP" parent="." index="4"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.12182, 0, -3.19709 )

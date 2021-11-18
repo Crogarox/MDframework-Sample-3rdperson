@@ -20,13 +20,13 @@ public class PlayerMP : KinematicBody
     public const string PLAYER_GROUP = "PLAYERS";
 
     [Export]
-    public float MaxSpeed = 2550f;
+    public float MaxSpeed = 2000f;
 
     [Export]
-    public float Acceleration = 2000f;
+    public float Acceleration = 1500f;
 
     [Export]
-    public float WeaponCooldown = 0.5f;
+    public float WeaponCooldown = 0.2f;
     [Export] float mouse_sensitivity = 0.05f;
 
     [MDBindNode("Camera")]
@@ -34,6 +34,9 @@ public class PlayerMP : KinematicBody
 
     [MDBindNode("HitCounter")]
     protected Godot.Label HitCounter;
+
+    [MDBindNode("HpCounter")]
+    protected Godot.Label HpCounter;
 
     [Export]
     public bool IsLocalPlayer = false;
@@ -45,6 +48,9 @@ public class PlayerMP : KinematicBody
     public bool IsBoosting = false;
     public float BoostLimit = 0;
     public float BoostCoolDown = 0;
+    const int healthMax = 10;
+    [Export]
+    public int healthy = healthMax;
 
     [Export]
     public float boostLimitAmount = 3;
@@ -52,6 +58,11 @@ public class PlayerMP : KinematicBody
     public float boostCoolDownAmount = 3;
     [Export]
     public float boostIncreaseAmount = 5;
+    public float deathTimer = 0;
+    public bool IsAlive = true;
+    [Export]
+    public PackedScene sparksDeath = (PackedScene)ResourceLoader.Load("res://Prefabs/sparksDeath.tscn");
+
 
     protected Vector3 MovementAxis = Vector3.Zero;
     protected Vector3 Motion = Vector3.Zero;
@@ -111,19 +122,22 @@ public class PlayerMP : KinematicBody
         prebullet = GetBulletScene();
         crosshair3d = GetNode<Sprite3D>("Crosshair3d");
         HitCounter = GetNode<Godot.Label>("CanvasLayer/HitCounter");
+        IsAlive = true;
         if (IsLocalPlayer)
         {
+            HpCounter = GetNode<Godot.Label>("CanvasLayer/HpCounter");
             RandomNumberGenerator rnd = new RandomNumberGenerator();
             rnd.Randomize();
 
             // Let's set our color
             NetworkedPlayerSettings = new PlayerSettings();
-            NetworkedPlayerSettings.PlayerColor = new Color(rnd.Randf(), rnd.Randf(), rnd.Randf());
+            NetworkedPlayerSettings.PlayerColor = (new Color(rnd.Randf(), rnd.Randf(), rnd.Randf(), 0.5f)).Inverted();
             NetworkedPlayerSettings.PlayerShotCounter = 0;
             NetworkedPlayerSettings.PlayerString = $"Some string {rnd.RandiRange(0, 10000)}";
             //Modulate = NetworkedPlayerSettings.PlayerColor;
             SpatialMaterial newMaterial = new SpatialMaterial();
             newMaterial.AlbedoColor = NetworkedPlayerSettings.PlayerColor;
+            newMaterial.FlagsTransparent = true;
             var currentmaterial = GetNode("CollisionShape/CSGCylinder") as CSGCylinder;
             currentmaterial.MaterialOverride = newMaterial;
             HitCounter.SetGlobalPosition(new Vector2(600, 0));
@@ -160,6 +174,18 @@ public class PlayerMP : KinematicBody
         HitCounterValue++;
         HitCounter.Text = HitCounterValue.ToString();
         //GD.Print(HitCounterValue);
+    }
+    public void UpdateHealth(int damage)
+    {
+        healthy = healthy + damage;
+        if(IsLocalPlayer)
+        {
+            HpCounter.Text = healthy.ToString();
+        }
+        if(healthy <= 0)
+        {
+            IsAlive = false;
+        }
     }
 
     protected void OnPositionChanged()
@@ -231,11 +257,60 @@ public class PlayerMP : KinematicBody
         {
             spring_arm.Translation = Translation;
         }
+        
+    }
+    public void Death()
+    {
+        Spatial newSparksDeath = (Spatial)sparksDeath.Instance();
+        newSparksDeath.Translation = Translation;//Translation;
+        GetTree().Root.AddChild(newSparksDeath);
+        deathTimer = 0;
+        Visible = false;
+    }
+    //Put spawn logic in a single file somewhere.
+    public void Respawn()
+    {
+        var rng = new RandomNumberGenerator();
+        rng.Randomize();
+        int spawnpick = rng.RandiRange(0, 3);
+        Vector3 spawnlocation = new Vector3();
+        switch (spawnpick)
+        {
+            case 0: spawnlocation = new Vector3(150, 3, 150); break;
+            case 1: spawnlocation = new Vector3(100, 3, 100); break;
+            case 2: spawnlocation = new Vector3(50, 3, 50); break;
+            case 3: spawnlocation = new Vector3(125, 50, 125); break;
+            default: spawnlocation = new Vector3(150, 50, 150); break;
+        }
+        var GlobalTemp = GlobalTransform;
+        GlobalTemp.origin = spawnlocation;
+        GlobalTransform = GlobalTemp;
+
+        RotationDegrees = Vector3.Zero;
+        healthy = healthMax;
+        if(IsLocalPlayer)
+        {
+            HpCounter.Text = healthy.ToString();
+        }
+        Visible = true;
     }
 
     public override void _PhysicsProcess(float delta)
     {
         //GD.Print(IsLocalPlayer);
+        if (!IsAlive && deathTimer <= 0)
+        {
+            Death();
+        }
+        else if (deathTimer >= 3 && !IsAlive)
+        {
+            IsAlive = true;
+            Respawn();
+        }
+        else
+        {
+            deathTimer = Mathf.Clamp(deathTimer + delta, 0, 3);
+        }
         if (IsLocalPlayer)
         {
             WeaponActiveCooldown -= delta;
@@ -246,7 +321,7 @@ public class PlayerMP : KinematicBody
                 //var cam = GetNode<Godot.Camera>("SpringArm/Camera");
                 var mouseposition = GetViewport().GetMousePosition();
                 var from = cammy.ProjectRayOrigin(mouseposition);
-                var to = from + cammy.ProjectRayNormal(mouseposition) * 10f;
+                var to = from + cammy.ProjectRayNormal(mouseposition) * 2000f;
                 //var tranformz = this.GlobalTransform;
                 //tranformz.origin = to;
 
@@ -333,7 +408,19 @@ public class PlayerMP : KinematicBody
             GD.Print("Mouse Click/Unclick at: ", eventMouseButton.Position);
         }
         */
-        if(@event.IsActionPressed("boost") && BoostCoolDown <= 0)
+        //if (@event is InputEventKey eventKey)        {            if (eventKey.Pressed && eventKey.Scancode == (int)KeyList.Escape) { }        }
+        if (@event.IsActionPressed("ui_cancel"))
+        {
+            if (Input.GetMouseMode() == Input.MouseMode.Captured)
+            {
+                Input.SetMouseMode(Input.MouseMode.Visible);
+            }
+            else
+            {
+                Input.SetMouseMode(Input.MouseMode.Captured);
+            }
+        }
+        if (@event.IsActionPressed("boost") && BoostCoolDown <= 0)
         {
             IsBoosting = true;
         }
@@ -459,6 +546,7 @@ public class PlayerMP : KinematicBody
         {
             velocityNew = velocityNew.Normalized() * maxSpeed;
         }
+        //GD.Print(BoostCoolDown + " " + BoostLimit);
         if (IsBoosting)
         {
             if (BoostLimit < boostLimitAmount && BoostCoolDown == 0)

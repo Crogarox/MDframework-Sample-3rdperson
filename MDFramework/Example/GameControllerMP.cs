@@ -41,11 +41,19 @@ public class GameControllerMP : Spatial
         Vector3 spawnlocation = new Vector3();
         switch(spawnpick)
         {
-            case 0: spawnlocation = new Vector3(150, 3, 150);   break;
-            case 1: spawnlocation = new Vector3(100, 3, 100);   break;
-            case 2: spawnlocation = new Vector3(50, 3, 50);     break;
-            case 3: spawnlocation = new Vector3(125, 50, 125);  break;
-            default:    spawnlocation = new Vector3(150, 50, 150); break;
+            case 0: spawnlocation = new Vector3(150, 3, 150); break;
+            case 1: spawnlocation = new Vector3(100, 3, 100); break;
+            case 2: spawnlocation = new Vector3(50, 3, 50); break;
+            case 3: spawnlocation = new Vector3(125, 50, 125); break;
+            default: spawnlocation = new Vector3(150, 50, 150); break;
+                /*
+
+                case 0: spawnlocation = new Vector3(33, 3, 33); break;
+            case 1: spawnlocation = new Vector3(25, 3, 25); break;
+            case 2: spawnlocation = new Vector3(10, 3, 10); break;
+            case 3: spawnlocation = new Vector3(28, 50, 28); break;
+            default: spawnlocation = new Vector3(50, 50, 50); break;
+                */
                 //case 3: spawnlocation = new Vector3(-50, 0, -50);   break; //bad location
                 //case 3: spawnlocation = new Vector3(0, 3, 0); break; //bad location
         }

@@ -1,10 +1,12 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://MDFramework/Example/BasicNetworkLobby.cs" type="Script" id=1]
 [ext_resource path="res://MDFramework/Example/SyncInterface.tscn" type="PackedScene" id=2]
 [ext_resource path="res://MDFramework/Example/GameControllerMP.cs" type="Script" id=3]
 [ext_resource path="res://MDFramework/Example/PeerSynchStatusRow.tscn" type="PackedScene" id=4]
 [ext_resource path="res://MDFramework/Example/Worldz7.tscn" type="PackedScene" id=5]
+[ext_resource path="res://MDFramework/Example/BtnQuit.cs" type="Script" id=6]
+[ext_resource path="res://icon.png" type="Texture" id=7]
 
 [node name="BasicNetworkLobby" type="Node2D"]
 script = ExtResource( 1 )
@@ -22,26 +24,26 @@ __meta__ = {
 
 [node name="ParentGrid" type="GridContainer" parent="CanvasLayer/CenterContainer"]
 margin_left = 234.0
-margin_top = 188.0
+margin_top = 151.0
 margin_right = 790.0
-margin_bottom = 411.0
+margin_bottom = 448.0
 custom_constants/vseparation = 20
 
 [node name="CenterContainer" type="CenterContainer" parent="CanvasLayer/CenterContainer/ParentGrid"]
 margin_right = 556.0
-margin_bottom = 155.0
+margin_bottom = 229.0
 
 [node name="GridContainer" type="GridContainer" parent="CanvasLayer/CenterContainer/ParentGrid/CenterContainer"]
-margin_left = 196.0
-margin_right = 360.0
-margin_bottom = 155.0
+margin_left = 183.0
+margin_right = 373.0
+margin_bottom = 229.0
 custom_constants/vseparation = 25
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="BtnSinglePlayer" type="Button" parent="CanvasLayer/CenterContainer/ParentGrid/CenterContainer/GridContainer"]
-margin_right = 164.0
+margin_right = 190.0
 margin_bottom = 20.0
 text = "Single Player"
 __meta__ = {
@@ -50,7 +52,7 @@ __meta__ = {
 
 [node name="BtnHost" type="Button" parent="CanvasLayer/CenterContainer/ParentGrid/CenterContainer/GridContainer"]
 margin_top = 45.0
-margin_right = 164.0
+margin_right = 190.0
 margin_bottom = 65.0
 text = "Host Server"
 __meta__ = {
@@ -59,7 +61,7 @@ __meta__ = {
 
 [node name="BtnJoin" type="Button" parent="CanvasLayer/CenterContainer/ParentGrid/CenterContainer/GridContainer"]
 margin_top = 90.0
-margin_right = 164.0
+margin_right = 190.0
 margin_bottom = 110.0
 text = "Join Server"
 __meta__ = {
@@ -68,27 +70,38 @@ __meta__ = {
 
 [node name="GridContainer" type="GridContainer" parent="CanvasLayer/CenterContainer/ParentGrid/CenterContainer/GridContainer"]
 margin_top = 135.0
-margin_right = 164.0
-margin_bottom = 155.0
+margin_right = 190.0
+margin_bottom = 229.0
 columns = 2
 
 [node name="TextAddress" type="TextEdit" parent="CanvasLayer/CenterContainer/ParentGrid/CenterContainer/GridContainer/GridContainer"]
-margin_right = 80.0
+margin_right = 106.0
 margin_bottom = 20.0
 rect_min_size = Vector2( 80, 20 )
 text = "127.0.0.1"
 
 [node name="TextPort" type="TextEdit" parent="CanvasLayer/CenterContainer/ParentGrid/CenterContainer/GridContainer/GridContainer"]
-margin_left = 84.0
-margin_right = 164.0
+margin_left = 110.0
+margin_right = 190.0
 margin_bottom = 20.0
 rect_min_size = Vector2( 80, 20 )
 text = "1234"
 
+[node name="BtnQuit" type="Button" parent="CanvasLayer/CenterContainer/ParentGrid/CenterContainer/GridContainer/GridContainer"]
+margin_top = 24.0
+margin_right = 106.0
+margin_bottom = 94.0
+text = "Quit"
+icon = ExtResource( 7 )
+script = ExtResource( 6 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="InfoLabel" type="Label" parent="CanvasLayer/CenterContainer/ParentGrid"]
-margin_top = 175.0
+margin_top = 249.0
 margin_right = 556.0
-margin_bottom = 223.0
+margin_bottom = 297.0
 text = "If it doesn't work please read the README.md
 PS. Starting server is slow on windows because Godot UPNP implementation is broken.
 You can autoload the CustomGameInstance to furn UPNP off."
@@ -165,4 +178,5 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -100, -65.671, -100 )
 [connection signal="pressed" from="CanvasLayer/CenterContainer/ParentGrid/CenterContainer/GridContainer/BtnSinglePlayer" to="." method="OnSinglePlayerPressed"]
 [connection signal="pressed" from="CanvasLayer/CenterContainer/ParentGrid/CenterContainer/GridContainer/BtnHost" to="." method="OnHostPressed"]
 [connection signal="pressed" from="CanvasLayer/CenterContainer/ParentGrid/CenterContainer/GridContainer/BtnJoin" to="." method="OnJoinPressed"]
+[connection signal="pressed" from="CanvasLayer/CenterContainer/ParentGrid/CenterContainer/GridContainer/GridContainer/BtnQuit" to="CanvasLayer/CenterContainer/ParentGrid/CenterContainer/GridContainer/GridContainer/BtnQuit" method="_on_BtnQuit_pressed"]
 [connection signal="pressed" from="CanvasLayer/BtnDisconnect" to="." method="OnDisconnectPressed"]

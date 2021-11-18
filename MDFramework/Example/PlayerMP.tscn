@@ -68,6 +68,16 @@ position = Vector2( 480, 300 )
 texture = ExtResource( 4 )
 script = ExtResource( 5 )
 
+[node name="HpCounter" type="Label" parent="CanvasLayer"]
+anchor_right = 1.0
+anchor_bottom = 0.1
+margin_top = 512.0
+margin_right = -900.0
+margin_bottom = 500.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="Crosshair3d" type="Sprite3D" parent="."]
 cast_shadow = 2
 texture = ExtResource( 4 )
