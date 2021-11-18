@@ -20,7 +20,7 @@ shader_param/line_color = Color( 1, 1, 1, 1 )
 shader_param/line_thickness = 1.0
 
 [node name="PlayerMP" type="KinematicBody" groups=["Players"]]
-collision_layer = 8
+collision_layer = 9
 collision_mask = 31
 script = ExtResource( 1 )
 
@@ -58,7 +58,6 @@ margin_left = 898.0
 margin_top = 6.0
 margin_right = -10.0
 margin_bottom = -34.4
-text = "0"
 __meta__ = {
 "_edit_use_anchors_": false
 }

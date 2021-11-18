@@ -35,7 +35,7 @@ emission_on_uv2 = false
 radius = 0.1
 
 [node name="Bullet" type="RigidBody" groups=["projectiles"]]
-collision_layer = 4096
+collision_layer = 4097
 collision_mask = 4127
 gravity_scale = 0.0
 contacts_reported = 1

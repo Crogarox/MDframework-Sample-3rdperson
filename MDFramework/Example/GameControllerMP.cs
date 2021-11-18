@@ -32,9 +32,30 @@ public class GameControllerMP : Spatial
     protected void SpawnPlayer(int PeerId)
     {
         var rng = new RandomNumberGenerator();
-        float my_random_number = rng.RandfRange(-10, 10);
+        rng.Randomize();
+        //float my_random_number = rng.RandfRange(0, 5);
+        int spawnpick = rng.RandiRange(0, 3);
+        Vector3 spawnlocation = new Vector3();
+        switch(spawnpick)
+        {
+            case 0: spawnlocation = new Vector3(150, 3, 150);   break;
+            case 1: spawnlocation = new Vector3(100, 3, 100);   break;
+            case 2: spawnlocation = new Vector3(50, 3, 50);     break;
+            case 3: spawnlocation = new Vector3(125, 50, 125);  break;
+            default:    spawnlocation = new Vector3(150, 50, 150); break;
+                //case 3: spawnlocation = new Vector3(-50, 0, -50);   break; //bad location
+                //case 3: spawnlocation = new Vector3(0, 3, 0); break; //bad location
+        }
+        GD.Print(spawnpick + " " + PeerId);
+        foreach (Node node in GetTree().GetNodesInGroup(Player.PLAYER_GROUP))
+        {
+            if (node.GetNetworkMaster() == PeerId)
+            {
+                node.RemoveAndFree();
+            }
+        }
         //this.SpawnNetworkedNode(GetPlayerScene(), "Player", PeerId);
-        this.SpawnNetworkedNode(GetPlayerScene(), "Player" , PeerId, new Vector3(my_random_number *150, 3, my_random_number *150));
+        this.SpawnNetworkedNode(GetPlayerScene(), "Player" , PeerId, spawnlocation);//Original was -10 - 10, * 150
     }
 
     private String GetPlayerScene()
@@ -46,6 +67,7 @@ public class GameControllerMP : Spatial
 
     protected virtual void OnPlayerLeftEvent(int PeerId)
     {
+        GD.Print(PeerId);
         foreach (Node node in GetTree().GetNodesInGroup(Player.PLAYER_GROUP))
         {
             if (node.GetNetworkMaster() == PeerId)

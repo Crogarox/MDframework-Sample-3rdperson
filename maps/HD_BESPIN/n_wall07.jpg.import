@@ -2,28 +2,30 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/n_wall07.jpg-63da3f9df65d664c28bbd8540d328449.stex"
+path.s3tc="res://.import/n_wall07.jpg-d2cda7c6813f6021184f47aa4c0392de.s3tc.stex"
+path.etc2="res://.import/n_wall07.jpg-d2cda7c6813f6021184f47aa4c0392de.etc2.stex"
 metadata={
-"vram_texture": false
+"imported_formats": [ "s3tc", "etc2" ],
+"vram_texture": true
 }
 
 [deps]
 
-source_file="res://maps/HD_BESPIN/n_wall07.jpg"
-dest_files=[ "res://.import/n_wall07.jpg-63da3f9df65d664c28bbd8540d328449.stex" ]
+source_file="D:/gits/MDframework-Sample-3rdperson/maps/HD_BESPIN/n_wall07.jpg"
+dest_files=[ "res://.import/n_wall07.jpg-d2cda7c6813f6021184f47aa4c0392de.s3tc.stex", "res://.import/n_wall07.jpg-d2cda7c6813f6021184f47aa4c0392de.etc2.stex" ]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/lossy_quality=0.7
 compress/hdr_mode=0
 compress/bptc_ldr=0
 compress/normal_map=0
-flags/repeat=0
+flags/repeat=true
 flags/filter=true
-flags/mipmaps=false
+flags/mipmaps=true
 flags/anisotropic=false
-flags/srgb=2
+flags/srgb=1
 process/fix_alpha_border=true
 process/premult_alpha=false
 process/HDR_as_SRGB=false
@@ -31,5 +33,5 @@ process/invert_color=false
 process/normal_map_invert_y=false
 stream=false
 size_limit=0
-detect_3d=true
+detect_3d=false
 svg/scale=1.0

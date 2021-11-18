@@ -4,7 +4,7 @@
 [ext_resource path="res://MDFramework/Example/SyncInterface.tscn" type="PackedScene" id=2]
 [ext_resource path="res://MDFramework/Example/GameControllerMP.cs" type="Script" id=3]
 [ext_resource path="res://MDFramework/Example/PeerSynchStatusRow.tscn" type="PackedScene" id=4]
-[ext_resource path="res://MDFramework/Example/Worldz.tscn" type="PackedScene" id=5]
+[ext_resource path="res://MDFramework/Example/Worldz7.tscn" type="PackedScene" id=5]
 
 [node name="BasicNetworkLobby" type="Node2D"]
 script = ExtResource( 1 )
@@ -159,8 +159,8 @@ light_energy = 5.0
 light_indirect_energy = 3.0
 light_bake_mode = 2
 
-[node name="Worldz" parent="." instance=ExtResource( 5 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -60.6645, -65.6712, -66.3477 )
+[node name="Worldz7" parent="." instance=ExtResource( 5 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -100, -65.671, -100 )
 
 [connection signal="pressed" from="CanvasLayer/CenterContainer/ParentGrid/CenterContainer/GridContainer/BtnSinglePlayer" to="." method="OnSinglePlayerPressed"]
 [connection signal="pressed" from="CanvasLayer/CenterContainer/ParentGrid/CenterContainer/GridContainer/BtnHost" to="." method="OnHostPressed"]

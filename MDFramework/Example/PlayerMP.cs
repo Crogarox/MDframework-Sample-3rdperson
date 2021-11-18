@@ -60,6 +60,17 @@ public class PlayerMP : KinematicBody
     [MDReplicatedSetting(MDReplicatedMember.Settings.OnValueChangedEvent, nameof(OnPositionChanged))]
     protected Vector3 NetworkedPosition;
 
+    [MDReplicated(MDReliability.Unreliable, MDReplicatedType.Interval)]
+    [MDReplicatedSetting(MDReplicator.Settings.GroupName, "PlayerRotation")]
+    [MDReplicatedSetting(MDReplicator.Settings.ProcessWhilePaused, false)]
+    [MDReplicatedSetting(MDReplicatedMember.Settings.OnValueChangedEvent, nameof(OnRotationChanged))]
+    public Vector3 ReplicatedRotation
+    {
+        get => this.RotationDegrees;
+        set {            this.RotationDegrees = value;        }
+    }
+
+
     [MDReplicated(MDReliability.Reliable, MDReplicatedType.OnChange)]
     [MDReplicatedSetting(MDReplicatedMember.Settings.OnValueChangedEvent, nameof(UpdateColor))]
     protected PlayerSettings NetworkedPlayerSettings { get; set; }
@@ -87,13 +98,11 @@ public class PlayerMP : KinematicBody
         spring_arm = GetNode<CameraJoint>("SpringArm");
         cammy = GetNode<Camera>("SpringArm/Camera");
         _model = (this as Spatial);
-
+        prebullet = GetBulletScene();
+        crosshair3d = GetNode<Sprite3D>("Crosshair3d");
+        HitCounter = GetNode<Godot.Label>("CanvasLayer/HitCounter");
         if (IsLocalPlayer)
         {
-            prebullet = GetBulletScene();
-            crosshair3d = GetNode<Sprite3D>("Crosshair3d");
-
-            HitCounter = GetNode<Godot.Label>("CanvasLayer/HitCounter");
             RandomNumberGenerator rnd = new RandomNumberGenerator();
             rnd.Randomize();
 
@@ -145,6 +154,13 @@ public class PlayerMP : KinematicBody
             var transformz = GlobalTransform;
             transformz.origin = NetworkedPosition;
             GlobalTransform = transformz;
+        }
+    }
+    protected void OnRotationChanged()
+    {
+        if (!IsLocalPlayer)
+        {
+            RotationDegrees = ReplicatedRotation;
         }
     }
 
@@ -215,8 +231,8 @@ public class PlayerMP : KinematicBody
                 var mouseposition = GetViewport().GetMousePosition();
                 var from = cammy.ProjectRayOrigin(mouseposition);
                 var to = from + cammy.ProjectRayNormal(mouseposition) * 10f;
-                var tranformz = this.GlobalTransform;
-                tranformz.origin = to;
+                //var tranformz = this.GlobalTransform;
+                //tranformz.origin = to;
 
                 //FMM = tranformz;
 
@@ -278,7 +294,8 @@ public class PlayerMP : KinematicBody
             //Motion = 
             //this.ApplyImpulse(Vector3.Zero,  Motion);
             //NetworkedPosition = Position;
-            Rpc("Update_Rotation", RotationDegrees);
+            //Rpc("Update_Rotation", RotationDegrees);
+            ReplicatedRotation = RotationDegrees;
             NetworkedPosition = GlobalTransform.origin;
         }
     }
