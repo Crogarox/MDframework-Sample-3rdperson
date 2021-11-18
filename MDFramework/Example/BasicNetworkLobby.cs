@@ -161,7 +161,7 @@ public class BasicNetworkLobby : Node2D
     {
         ToggleInterface(false);
         ToggleDisconnectVisible(true);
-        GameSession.SpawnNetworkedNode(prepacked, "levelz", -1, Vector3.Zero);
+        //GameSession.SpawnNetworkedNode(prepacked, "levelz", -1, Vector3.Zero);
         
     }
 

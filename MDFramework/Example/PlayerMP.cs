@@ -125,7 +125,8 @@ public class PlayerMP : KinematicBody
             newMaterial.AlbedoColor = new Color(rnd.Randf(), rnd.Randf(), rnd.Randf());
             var currentmaterial = GetNode("CollisionShape/CSGCylinder") as CSGCylinder;
             currentmaterial.MaterialOverride = newMaterial;
-            MDOnScreenDebug.AddOnScreenDebugInfo("RsetTest " + GetNetworkMaster().ToString(), () => { return RsetTest; });
+            //Why does this cause it to crash?
+            //MDOnScreenDebug.AddOnScreenDebugInfo("RsetTest " + GetNetworkMaster().ToString(), () => { return RsetTest; });
         }
     }
 

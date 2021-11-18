@@ -5,10 +5,13 @@ using MD;
 public class GameControllerMP : Spatial
 {
     protected MDGameSession GameSession;
+    [Export]
+    public PackedScene PlayerResource;
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
+        PlayerResource = (PackedScene)ResourceLoader.Load("res://MDFramework/Example/PlayerMP.tscn");
         GameSession = this.GetGameSession();
         GameSession.OnPlayerJoinedEvent += OnPlayerJoinedEvent;
         GameSession.OnPlayerLeftEvent += OnPlayerLeftEvent;
@@ -54,8 +57,10 @@ public class GameControllerMP : Spatial
                 node.RemoveAndFree();
             }
         }
+        //int addtoname = rng.RandiRange(0, 9999);
         //this.SpawnNetworkedNode(GetPlayerScene(), "Player", PeerId);
-        this.SpawnNetworkedNode(GetPlayerScene(), "Player" , PeerId, spawnlocation);//Original was -10 - 10, * 150
+        //this.SpawnNetworkedNode(GetPlayerScene(), "Player" , PeerId, spawnlocation);//Original was -10 - 10, * 150
+        this.SpawnNetworkedNode(PlayerResource, "Player", PeerId, spawnlocation);
     }
 
     private String GetPlayerScene()
