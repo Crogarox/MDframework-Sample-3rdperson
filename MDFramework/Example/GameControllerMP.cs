@@ -50,13 +50,6 @@ public class GameControllerMP : Spatial
                 //case 3: spawnlocation = new Vector3(0, 3, 0); break; //bad location
         }
         GD.Print(spawnpick + " " + PeerId);
-        foreach (Node node in GetTree().GetNodesInGroup(Player.PLAYER_GROUP))
-        {
-            if (node.GetNetworkMaster() == PeerId)
-            {
-                node.RemoveAndFree();
-            }
-        }
         //int addtoname = rng.RandiRange(0, 9999);
         //this.SpawnNetworkedNode(GetPlayerScene(), "Player", PeerId);
         //this.SpawnNetworkedNode(GetPlayerScene(), "Player" , PeerId, spawnlocation);//Original was -10 - 10, * 150

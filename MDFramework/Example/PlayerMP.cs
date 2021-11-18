@@ -42,6 +42,16 @@ public class PlayerMP : KinematicBody
     [Export]
     public Spatial _model;
     //protected bool IsLocalPlayer = true;
+    public bool IsBoosting = false;
+    public float BoostLimit = 0;
+    public float BoostCoolDown = 0;
+
+    [Export]
+    public float boostLimitAmount = 3;
+    [Export]
+    public float boostCoolDownAmount = 3;
+    [Export]
+    public float boostIncreaseAmount = 5;
 
     protected Vector3 MovementAxis = Vector3.Zero;
     protected Vector3 Motion = Vector3.Zero;
@@ -116,6 +126,7 @@ public class PlayerMP : KinematicBody
             newMaterial.AlbedoColor = NetworkedPlayerSettings.PlayerColor;
             var currentmaterial = GetNode("CollisionShape/CSGCylinder") as CSGCylinder;
             currentmaterial.MaterialOverride = newMaterial;
+            HitCounter.SetGlobalPosition(new Vector2(600, 0));
         }
         else
         {
@@ -125,6 +136,10 @@ public class PlayerMP : KinematicBody
             newMaterial.AlbedoColor = new Color(rnd.Randf(), rnd.Randf(), rnd.Randf());
             var currentmaterial = GetNode("CollisionShape/CSGCylinder") as CSGCylinder;
             currentmaterial.MaterialOverride = newMaterial;
+            int numberofplayers = GetTree().GetNodesInGroup(Player.PLAYER_GROUP).Count;
+            //foreach (Node node in GetTree().GetNodesInGroup(Player.PLAYER_GROUP))            {                GD.Print(node.GetNetworkMaster());            }
+
+            HitCounter.SetGlobalPosition(new Vector2(600, (numberofplayers * 15)));
             //Why does this cause it to crash?
             //MDOnScreenDebug.AddOnScreenDebugInfo("RsetTest " + GetNetworkMaster().ToString(), () => { return RsetTest; });
         }
@@ -144,7 +159,7 @@ public class PlayerMP : KinematicBody
     {
         HitCounterValue++;
         HitCounter.Text = HitCounterValue.ToString();
-        GD.Print(HitCounterValue);
+        //GD.Print(HitCounterValue);
     }
 
     protected void OnPositionChanged()
@@ -309,16 +324,31 @@ public class PlayerMP : KinematicBody
         }
     }
 
-    /*
     public override void _Input(InputEvent @event)
     {
         // Mouse in viewport coordinates.
+        /*
         if (@event is InputEventMouseButton eventMouseButton)
         {
             GD.Print("Mouse Click/Unclick at: ", eventMouseButton.Position);
         }
+        */
+        if(@event.IsActionPressed("boost") && BoostCoolDown <= 0)
+        {
+            IsBoosting = true;
+        }
+        if (@event.IsActionPressed("boost") && BoostCoolDown > 0)
+        {
+            IsBoosting = false;
+        }
+        else if(@event.IsActionReleased("boost") && BoostCoolDown == 0)
+        {
+            IsBoosting = false;
+            BoostCoolDown = 0.5f;
+        }
+        
+
     }
-    */
     public override void _UnhandledInput(InputEvent @event)
     {
 
@@ -424,12 +454,32 @@ public class PlayerMP : KinematicBody
     {
         Vector3 velocityNew = velocityCurrent;
         velocityNew = moveDirection * delta * moveSpeed;
+
         if (velocityNew.Length() > maxSpeed)
         {
             velocityNew = velocityNew.Normalized() * maxSpeed;
         }
+        if (IsBoosting)
+        {
+            if (BoostLimit < boostLimitAmount && BoostCoolDown == 0)
+            {
+                velocityNew = velocityNew * boostIncreaseAmount;
+                BoostLimit = BoostLimit + delta;
+            }
+            else if(BoostLimit >= boostLimitAmount)
+            {
+                IsBoosting = false;
+                BoostCoolDown = 3;
+            }
+        }
+        else
+        {
+            BoostLimit =    Mathf.Clamp(BoostLimit - delta, 0, 3) ;
+            BoostCoolDown = Mathf.Clamp(BoostCoolDown - delta, 0, 3) ;
+        }
+        
         // override because start value is 0.0f
-       // velocityNew.y = velocityCurrent.y + gravity * delta;
+        // velocityNew.y = velocityCurrent.y + gravity * delta;
 
         return velocityNew;
     }
