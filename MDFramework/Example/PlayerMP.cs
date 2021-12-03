@@ -486,32 +486,30 @@ public class PlayerMP : KinematicBody
         float LR = Input.GetActionStrength("move_right") - Input.GetActionStrength("move_left");//Right is negative - left is 1
         float FB = Input.GetActionStrength("move_back") - Input.GetActionStrength("move_front");//Back is + 1, Forward is -1
         float Ymove = 0;
-        if (FB != 0)
+        //GD.Print("----- | "+FB + " " + Ymove);
+        if (FB < 0)
         {
             Ymove = Mathf.Sin(MouseY);
-            //GD.Print("----- | "+FB + " " + Ymove);
-            if (FB < 0)
+            if (Ymove < 0)
             {
-                if (Ymove < 0)
-                {
-                    FB = FB + Ymove * -1;
-                }
-                else if (Ymove > 0)
-                {
-                    FB = FB + Ymove;
-                }
+                FB = FB + Ymove * -1;
             }
-            else if (FB > 0)
+            else if (Ymove > 0)
             {
-                Ymove = Ymove * -1;
-                if(Ymove > 0)
-                {
-                    FB = FB - Ymove;
-                }
-                else if (Ymove < 0)
-                {
-                    FB = FB + Ymove;
-                }
+                FB = FB + Ymove;
+            }
+        }
+        else if (FB > 0)
+        {
+            Ymove = Mathf.Sin(MouseY);
+            Ymove = Ymove * -1;
+            if(Ymove > 0)
+            {
+                FB = FB - Ymove;
+            }
+            else if (Ymove < 0)
+            {
+                FB = FB + Ymove;
             }
         }
         //GD.Print("----- | " + FB + " " + (Ymove + (Input.GetActionStrength("move_up") - Input.GetActionStrength("move_down"))));
