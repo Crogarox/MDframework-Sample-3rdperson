@@ -9,7 +9,7 @@ public class CameraJoint : SpringArm
     public override void _Ready()
     {
         SetAsToplevel(true);
-        //Input.SetMouseMode(Input.MouseMode.Captured);
+        //Input.MouseMode =Input.MouseModeEnum.Captured);
         Input.MouseMode = Input.MouseModeEnum.Captured;
         var parentExclude = (GetParent() as KinematicBody);
         //var parentExclude = (GetParent() as RigidBody);
