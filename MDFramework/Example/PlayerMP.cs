@@ -411,13 +411,23 @@ public class PlayerMP : KinematicBody
         //if (@event is InputEventKey eventKey)        {            if (eventKey.Pressed && eventKey.Scancode == (int)KeyList.Escape) { }        }
         if (@event.IsActionPressed("ui_cancel"))
         {
-            if (Input.GetMouseMode() == Input.MouseMode.Captured)
+			/*
+			if (Input.GetMouseMode() == Input.MouseMode.Captured)
             {
                 Input.SetMouseMode(Input.MouseMode.Visible);
             }
             else
             {
                 Input.SetMouseMode(Input.MouseMode.Captured);
+            }
+			 */
+            if (Input.MouseMode == Input.MouseModeEnum.Captured)
+            {
+                Input.MouseMode = Input.MouseModeEnum.Visible;
+            }
+            else
+            {
+                Input.MouseMode =Input.MouseModeEnum.Captured ;
             }
         }
         if (@event.IsActionPressed("boost") && BoostCoolDown <= 0)

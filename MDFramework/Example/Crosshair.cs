@@ -16,7 +16,8 @@ public class Crosshair : Sprite
 //  // Called every frame. 'delta' is the elapsed time since the previous frame.
   public override void _Process(float delta)
   {
-        if (Input.GetMouseMode() == Input.MouseMode.Captured)
+        //if (Input.GetMouseMode() == Input.MouseMode.Captured)
+        if (Input.MouseMode == Input.MouseModeEnum.Captured)
         {
             GlobalPosition = new Vector2(GetViewportRect().Size / 2);
         }

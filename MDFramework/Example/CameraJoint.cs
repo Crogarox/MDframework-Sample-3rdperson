@@ -9,7 +9,8 @@ public class CameraJoint : SpringArm
     public override void _Ready()
     {
         SetAsToplevel(true);
-        Input.SetMouseMode(Input.MouseMode.Captured);
+        //Input.SetMouseMode(Input.MouseMode.Captured);
+        Input.MouseMode = Input.MouseModeEnum.Captured;
         var parentExclude = (GetParent() as KinematicBody);
         //var parentExclude = (GetParent() as RigidBody);
 
@@ -23,7 +24,7 @@ public class CameraJoint : SpringArm
     {
 
         //base._UnhandledInput(@event);
-        if(@event is InputEventMouseMotion)
+        if (@event is InputEventMouseMotion)
         {
             var eventy = @event as InputEventMouseMotion;
             //RotationDegrees.x -= evey.relative.y
