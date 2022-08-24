@@ -1,6 +1,6 @@
 [gd_scene load_steps=63 format=2]
 
-[ext_resource path="res://Prefabs/Bullets/bullet.gd" type="Script" id=1]
+[ext_resource path="res://ShootingGameExample/BulletKinematic.cs" type="Script" id=1]
 [ext_resource path="res://effects_shared/BlastMesh.mesh" type="ArrayMesh" id=2]
 [ext_resource path="res://Prefabs/Bullets/bullet_explode.wav" type="AudioStream" id=3]
 [ext_resource path="res://Prefabs/Bullets/effect/BlastMaterial.tres" type="Material" id=4]
@@ -471,6 +471,7 @@ anims/explode = SubResource( 3 )
 
 [node name="ExplosionAudio" type="AudioStreamPlayer3D" parent="."]
 stream = ExtResource( 3 )
+unit_db = -30.0
 unit_size = 20.0
 autoplay = true
 

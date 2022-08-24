@@ -1,6 +1,6 @@
 [gd_scene load_steps=63 format=2]
 
-[ext_resource path="res://Prefabs/Bullets/bullet.gd" type="Script" id=1]
+[ext_resource path="res://ShootingGameExample/Bullet.cs" type="Script" id=1]
 [ext_resource path="res://effects_shared/BlastMesh.mesh" type="ArrayMesh" id=2]
 [ext_resource path="res://Prefabs/Bullets/bullet_explode.wav" type="AudioStream" id=3]
 [ext_resource path="res://Prefabs/Bullets/effect/BlastMaterial.tres" type="Material" id=4]
@@ -444,7 +444,7 @@ height = 0.3
 radial_segments = 4
 rings = 4
 
-[node name="Bullet" type="KinematicBody"]
+[node name="Bullet" type="RigidBody"]
 collision_layer = 0
 script = ExtResource( 1 )
 
@@ -471,6 +471,7 @@ anims/explode = SubResource( 3 )
 
 [node name="ExplosionAudio" type="AudioStreamPlayer3D" parent="."]
 stream = ExtResource( 3 )
+unit_db = -15.0
 unit_size = 20.0
 autoplay = true
 
@@ -554,3 +555,5 @@ amount = 10
 local_coords = false
 process_material = SubResource( 54 )
 draw_pass_1 = SubResource( 55 )
+
+[connection signal="body_entered" from="." to="." method="_OnCollisionEnter"]
