@@ -20,13 +20,14 @@ public class PlayerMP : KinematicBody
     public const string PLAYER_GROUP = "PLAYERS";
 
     [Export]
-    public float MaxSpeed = 150f;
+    public float MaxSpeed = 2000f;
 
     [Export]
-    public float Acceleration = 2000f;
+    public float Acceleration = 1500f;
 
     [Export]
-    public float WeaponCooldown = 1f;
+    public float WeaponCooldown = 0.2f;
+    [Export] float mouse_sensitivity = 0.05f;
 
     [MDBindNode("Camera")]
     protected Godot.Camera Camera;
@@ -34,9 +35,34 @@ public class PlayerMP : KinematicBody
     [MDBindNode("HitCounter")]
     protected Godot.Label HitCounter;
 
+    [MDBindNode("HpCounter")]
+    protected Godot.Label HpCounter;
+
     [Export]
     public bool IsLocalPlayer = false;
+    [Export]
+    public CameraJoint spring_arm;
+    [Export]
+    public Spatial _model;
     //protected bool IsLocalPlayer = true;
+    public bool IsBoosting = false;
+    public float BoostLimit = 0;
+    public float BoostCoolDown = 0;
+    const int healthMax = 10;
+    [Export]
+    public int healthy = healthMax;
+
+    [Export]
+    public float boostLimitAmount = 3;
+    [Export]
+    public float boostCoolDownAmount = 3;
+    [Export]
+    public float boostIncreaseAmount = 5;
+    public float deathTimer = 0;
+    public bool IsAlive = true;
+    [Export]
+    public PackedScene sparksDeath = (PackedScene)ResourceLoader.Load("res://Prefabs/sparksDeath.tscn");
+
 
     protected Vector3 MovementAxis = Vector3.Zero;
     protected Vector3 Motion = Vector3.Zero;
@@ -55,15 +81,34 @@ public class PlayerMP : KinematicBody
     [MDReplicatedSetting(MDReplicatedMember.Settings.OnValueChangedEvent, nameof(OnPositionChanged))]
     protected Vector3 NetworkedPosition;
 
+    [MDReplicated(MDReliability.Unreliable, MDReplicatedType.Interval)]
+    [MDReplicatedSetting(MDReplicator.Settings.GroupName, "PlayerRotation")]
+    [MDReplicatedSetting(MDReplicator.Settings.ProcessWhilePaused, false)]
+    [MDReplicatedSetting(MDReplicatedMember.Settings.OnValueChangedEvent, nameof(OnRotationChanged))]
+    public Vector3 ReplicatedRotation
+    {
+        get => this.RotationDegrees;
+        set {            this.RotationDegrees = value;        }
+    }
+
+
     [MDReplicated(MDReliability.Reliable, MDReplicatedType.OnChange)]
     [MDReplicatedSetting(MDReplicatedMember.Settings.OnValueChangedEvent, nameof(UpdateColor))]
     protected PlayerSettings NetworkedPlayerSettings { get; set; }
 
     [Puppet]
     protected String RsetTest = "";
-    public const float moveSpeed = 100f;
-    public const float maxSpeed = 50.0f;
-    public const float gravity = -25.0f;
+    //public const float moveSpeed = 500f;
+    //public const float maxSpeed = 1000.0f;
+    public const float moveSpeed = 500f; //Default was 100f
+    public const float maxSpeed = 3000.0f;//Default was 50f
+    public const float gravity = 0f;//Default was -25.0f
+    public float rotationx = 0.0f;
+    public Camera cammy;
+    public float mouseY = 0.0f;
+    public static float MouseLastY = 0.0f;
+    public PackedScene prebullet;
+    public Sprite3D crosshair3d;
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
@@ -71,21 +116,46 @@ public class PlayerMP : KinematicBody
         AddToGroup(PLAYER_GROUP);
         SetupPlayer(GetNetworkMaster());
 
+        spring_arm = GetNode<CameraJoint>("SpringArm");
+        cammy = GetNode<Camera>("SpringArm/Camera");
+        _model = (this as Spatial);
+        prebullet = GetBulletScene();
+        crosshair3d = GetNode<Sprite3D>("Crosshair3d");
+        HitCounter = GetNode<Godot.Label>("CanvasLayer/HitCounter");
+        IsAlive = true;
         if (IsLocalPlayer)
         {
+            HpCounter = GetNode<Godot.Label>("CanvasLayer/HpCounter");
             RandomNumberGenerator rnd = new RandomNumberGenerator();
             rnd.Randomize();
 
             // Let's set our color
             NetworkedPlayerSettings = new PlayerSettings();
-            NetworkedPlayerSettings.PlayerColor = new Color(rnd.Randf(), rnd.Randf(), rnd.Randf());
+            NetworkedPlayerSettings.PlayerColor = (new Color(rnd.Randf(), rnd.Randf(), rnd.Randf(), 0.5f)).Inverted();
             NetworkedPlayerSettings.PlayerShotCounter = 0;
             NetworkedPlayerSettings.PlayerString = $"Some string {rnd.RandiRange(0, 10000)}";
             //Modulate = NetworkedPlayerSettings.PlayerColor;
+            SpatialMaterial newMaterial = new SpatialMaterial();
+            newMaterial.AlbedoColor = NetworkedPlayerSettings.PlayerColor;
+            newMaterial.FlagsTransparent = true;
+            var currentmaterial = GetNode("CollisionShape/CSGCylinder") as CSGCylinder;
+            currentmaterial.MaterialOverride = newMaterial;
+            HitCounter.SetGlobalPosition(new Vector2(600, 0));
         }
         else
         {
-            MDOnScreenDebug.AddOnScreenDebugInfo("RsetTest " + GetNetworkMaster().ToString(), () => { return RsetTest; });
+            RandomNumberGenerator rnd = new RandomNumberGenerator();
+            rnd.Randomize();
+            SpatialMaterial newMaterial = new SpatialMaterial();
+            newMaterial.AlbedoColor = new Color(rnd.Randf(), rnd.Randf(), rnd.Randf());
+            var currentmaterial = GetNode("CollisionShape/CSGCylinder") as CSGCylinder;
+            currentmaterial.MaterialOverride = newMaterial;
+            int numberofplayers = GetTree().GetNodesInGroup(Player.PLAYER_GROUP).Count;
+            //foreach (Node node in GetTree().GetNodesInGroup(Player.PLAYER_GROUP))            {                GD.Print(node.GetNetworkMaster());            }
+
+            HitCounter.SetGlobalPosition(new Vector2(600, (numberofplayers * 15)));
+            //Why does this cause it to crash?
+            //MDOnScreenDebug.AddOnScreenDebugInfo("RsetTest " + GetNetworkMaster().ToString(), () => { return RsetTest; });
         }
     }
 
@@ -103,6 +173,19 @@ public class PlayerMP : KinematicBody
     {
         HitCounterValue++;
         HitCounter.Text = HitCounterValue.ToString();
+        //GD.Print(HitCounterValue);
+    }
+    public void UpdateHealth(int damage)
+    {
+        healthy = healthy + damage;
+        if(IsLocalPlayer)
+        {
+            HpCounter.Text = healthy.ToString();
+        }
+        if(healthy <= 0)
+        {
+            IsAlive = false;
+        }
     }
 
     protected void OnPositionChanged()
@@ -115,19 +198,27 @@ public class PlayerMP : KinematicBody
             GlobalTransform = transformz;
         }
     }
+    protected void OnRotationChanged()
+    {
+        if (!IsLocalPlayer)
+        {
+            RotationDegrees = ReplicatedRotation;
+        }
+    }
 
     [Remote]
     protected void OnShoot(Vector3 Target)
     {
         if (Target != Vector3.Zero)
         {
-            Bullet bullet = (Bullet)GetBulletScene().Instance();
+            Bullet bullet = (Bullet)prebullet.Instance();
             var bulletGlobalTransform = GlobalTransform;
-            bulletGlobalTransform.origin = GlobalTransform.origin + Vector3.Up;
+            bulletGlobalTransform.origin = GlobalTransform.origin;
             bullet.GlobalTransform = bulletGlobalTransform;
             //bullet.GlobalPosition = GlobalPosition;
             //bullet.GlobalPosition = GlobalPosition;
             bullet.SetOwner(GetNetworkMaster());
+            bullet.SetOwnerException(this);
             //bullet.Owner = GetNetworkMaster();
             GetParent().AddChild(bullet);
             bullet.SetTarget(Target);
@@ -159,9 +250,67 @@ public class PlayerMP : KinematicBody
         return BulletScene;
     }
 
+    public override void _Process(float delta)
+    {
+        //base._Process(delta);
+        if (IsLocalPlayer)
+        {
+            spring_arm.Translation = Translation;
+        }
+        
+    }
+    public void Death()
+    {
+        Spatial newSparksDeath = (Spatial)sparksDeath.Instance();
+        newSparksDeath.Translation = Translation;//Translation;
+        GetTree().Root.AddChild(newSparksDeath);
+        deathTimer = 0;
+        Visible = false;
+    }
+    //Put spawn logic in a single file somewhere.
+    public void Respawn()
+    {
+        var rng = new RandomNumberGenerator();
+        rng.Randomize();
+        int spawnpick = rng.RandiRange(0, 3);
+        Vector3 spawnlocation = new Vector3();
+        switch (spawnpick)
+        {
+            case 0: spawnlocation = new Vector3(150, 3, 150); break;
+            case 1: spawnlocation = new Vector3(100, 3, 100); break;
+            case 2: spawnlocation = new Vector3(50, 3, 50); break;
+            case 3: spawnlocation = new Vector3(125, 50, 125); break;
+            default: spawnlocation = new Vector3(150, 50, 150); break;
+        }
+        var GlobalTemp = GlobalTransform;
+        GlobalTemp.origin = spawnlocation;
+        GlobalTransform = GlobalTemp;
+
+        RotationDegrees = Vector3.Zero;
+        healthy = healthMax;
+        if(IsLocalPlayer)
+        {
+            HpCounter.Text = healthy.ToString();
+        }
+        Visible = true;
+    }
+
     public override void _PhysicsProcess(float delta)
     {
         //GD.Print(IsLocalPlayer);
+        if (!IsAlive && deathTimer <= 0)
+        {
+            Death();
+        }
+        else if (deathTimer >= 3 && !IsAlive)
+        {
+            IsAlive = true;
+            Respawn();
+        }
+        else
+        {
+            deathTimer = Mathf.Clamp(deathTimer + delta, 0, 3);
+        }
         if (IsLocalPlayer)
         {
             WeaponActiveCooldown -= delta;
@@ -169,12 +318,13 @@ public class PlayerMP : KinematicBody
             // Get input
             if (Input.IsMouseButtonPressed(1) && WeaponActiveCooldown <= 0f)
             {
-                var cam = GetNode<Godot.Camera>("Camera");
+                //var cam = GetNode<Godot.Camera>("SpringArm/Camera");
                 var mouseposition = GetViewport().GetMousePosition();
-                var from = cam.ProjectRayOrigin(mouseposition);
-                var to = from + cam.ProjectRayNormal(mouseposition) * 10f;
-                var tranformz = this.GlobalTransform;
-                tranformz.origin = to;
+                var from = cammy.ProjectRayOrigin(mouseposition);
+                var to = from + cammy.ProjectRayNormal(mouseposition) * 2000f;
+                //var tranformz = this.GlobalTransform;
+                //tranformz.origin = to;
+
                 //FMM = tranformz;
 
                 // Shoot towards mouse position
@@ -197,8 +347,9 @@ public class PlayerMP : KinematicBody
                 this.MDRset(nameof(RsetTest), rnd.RandiRange(0, 100000).ToString());
                 RsetActiveCooldown = 0.1f;
             }
-
-            MovementAxis = (GetInputAxis() + GetInputDirection()) * 2f;
+            
+            MovementAxis = (GetInputAxis() + GetInputDirection(spring_arm.Rotation.x)) * 2f;
+            MovementAxis = MovementAxis.Rotated(Vector3.Up, spring_arm.Rotation.y).Normalized();
 
             // Move
             if (MovementAxis == Vector3.Zero)
@@ -212,15 +363,106 @@ public class PlayerMP : KinematicBody
 
             //Motion = MoveAndSlide(Motion);
             // move character
+
+            //this.RotateX((Input.GetActionStrength("move_rotate_down") - Input.GetActionStrength("move_rotate_up")) / 10);
+            //Motion = Motion.Rotated(Vector3.Up, spring_arm.Rotation.y).Normalized();
             Motion = CalculateVelocity(Motion, MovementAxis, delta);
+            //ApplyImpulse(GlobalTransform.origin, Motion);
             Motion = MoveAndSlide(Motion, Vector3.Up);
-            this.RotateY((Input.GetActionStrength("move_rotate_left") - Input.GetActionStrength("move_rotate_right"))/10);
+
+
+            //var collisionmade = MoveAndCollide(Motion);
+            /*
+            if (Motion.Length() > 0.2)
+            {
+                Vector2 look_direction = new Vector2(Motion.z, Motion.x);
+                //Rotation = new Vector3(Rotation.x, look_direction.Angle(), Rotation.z);
+                //Rotate(Vector3.Up, look_direction.Angle());
+                _model.Rotation = new Vector3(_model.Rotation.x, look_direction.Angle(), _model.Rotation.z);
+            }
+            */
+
             //Motion = 
             //this.ApplyImpulse(Vector3.Zero,  Motion);
             //NetworkedPosition = Position;
+            //Rpc("Update_Rotation", RotationDegrees);
+            ReplicatedRotation = RotationDegrees;
             NetworkedPosition = GlobalTransform.origin;
         }
     }
+    [Remote]
+    public void Update_Rotation(Vector3 Rota)
+    {
+        if (Rota != null)
+        {
+            RotationDegrees = Rota;
+        }
+    }
+
+    public override void _Input(InputEvent @event)
+    {
+        // Mouse in viewport coordinates.
+        /*
+        if (@event is InputEventMouseButton eventMouseButton)
+        {
+            GD.Print("Mouse Click/Unclick at: ", eventMouseButton.Position);
+        }
+        */
+        //if (@event is InputEventKey eventKey)        {            if (eventKey.Pressed && eventKey.Scancode == (int)KeyList.Escape) { }        }
+        if (@event.IsActionPressed("ui_cancel"))
+        {
+            if (Input.GetMouseMode() == Input.MouseMode.Captured)
+            {
+                Input.SetMouseMode(Input.MouseMode.Visible);
+            }
+            else
+            {
+                Input.SetMouseMode(Input.MouseMode.Captured);
+            }
+        }
+        if (@event.IsActionPressed("boost") && BoostCoolDown <= 0)
+        {
+            IsBoosting = true;
+        }
+        if (@event.IsActionPressed("boost") && BoostCoolDown > 0)
+        {
+            IsBoosting = false;
+        }
+        else if(@event.IsActionReleased("boost") && BoostCoolDown == 0)
+        {
+            IsBoosting = false;
+            BoostCoolDown = 0.5f;
+        }
+        
+
+    }
+    public override void _UnhandledInput(InputEvent @event)
+    {
+
+        if (IsLocalPlayer)
+        {
+            //base._UnhandledInput(@event);
+            if (@event is InputEventMouseMotion)
+            {
+                var eventy = @event as InputEventMouseMotion;
+                //RotationDegrees.x -= evey.relative.y
+                var rotationDegreesX = RotationDegrees.x;
+                var rotationDegreesY = RotationDegrees.y;
+                mouseY = eventy.Relative.x * mouse_sensitivity;
+
+                //rotationDegreesX -= eventy.Relative.y * mouse_sensitivity;
+                //rotationDegreesX = Mathf.Clamp(rotationDegreesX, -180.0f, 180.0f);
+                rotationDegreesY -= eventy.Relative.x * mouse_sensitivity;
+                rotationDegreesY = Mathf.Wrap(rotationDegreesY, 0, 360.0f);
+                var springarmclamp = Mathf.Clamp(spring_arm.rotationDegreesX, -90.0f, 90.0f);
+                //RotationDegrees = new Vector3(rotationDegreesX, rotationDegreesY, RotationDegrees.z);
+                //RotateX(eventy.Relative.y * mouse_sensitivity);
+
+                RotationDegrees = new Vector3(springarmclamp, rotationDegreesY, RotationDegrees.z);
+            }
+        }
+    }
+
 
     protected virtual void ApplyMovement(Vector3 MovementSpeed, float Max)
     {
@@ -239,13 +481,53 @@ public class PlayerMP : KinematicBody
             Motion = Vector3.Zero;
         }
     }
+    public static Vector3 GetInputDirection(float MouseY)
+    {
+        float LR = Input.GetActionStrength("move_right") - Input.GetActionStrength("move_left");//Right is negative - left is 1
+        float FB = Input.GetActionStrength("move_back") - Input.GetActionStrength("move_front");//Back is + 1, Forward is -1
+        float Ymove = 0;
+        if (FB != 0)
+        {
+            Ymove = Mathf.Sin(MouseY);
+            //GD.Print("----- | "+FB + " " + Ymove);
+            if (FB < 0)
+            {
+                if (Ymove < 0)
+                {
+                    FB = FB + Ymove * -1;
+                }
+                else if (Ymove > 0)
+                {
+                    FB = FB + Ymove;
+                }
+            }
+            else if (FB > 0)
+            {
+                Ymove = Ymove * -1;
+                if(Ymove > 0)
+                {
+                    FB = FB - Ymove;
+                }
+                else if (Ymove < 0)
+                {
+                    FB = FB + Ymove;
+                }
+            }
+        }
+        //GD.Print("----- | " + FB + " " + (Ymove + (Input.GetActionStrength("move_up") - Input.GetActionStrength("move_down"))));
+        return new Vector3(
+            LR,
+            (Ymove) + (Input.GetActionStrength("move_up") - Input.GetActionStrength("move_down")),//Input.GetActionStrength("move_up") - Input.GetActionStrength("move_down"),//0.0f,
+            FB
+            ).Normalized();
+    }
     public static Vector3 GetInputDirection()
     {
         return new Vector3(
             Input.GetActionStrength("move_right") - Input.GetActionStrength("move_left"),
-            0.0f,
+            Input.GetActionStrength("move_up") - Input.GetActionStrength("move_down"),//0.0f,
             Input.GetActionStrength("move_back") - Input.GetActionStrength("move_front")
-            );
+            ).Normalized();
     }
     protected Vector3 GetInputAxis()
     {
@@ -259,12 +541,33 @@ public class PlayerMP : KinematicBody
     {
         Vector3 velocityNew = velocityCurrent;
         velocityNew = moveDirection * delta * moveSpeed;
+
         if (velocityNew.Length() > maxSpeed)
         {
             velocityNew = velocityNew.Normalized() * maxSpeed;
         }
+        //GD.Print(BoostCoolDown + " " + BoostLimit);
+        if (IsBoosting)
+        {
+            if (BoostLimit < boostLimitAmount && BoostCoolDown == 0)
+            {
+                velocityNew = velocityNew * boostIncreaseAmount;
+                BoostLimit = BoostLimit + delta;
+            }
+            else if(BoostLimit >= boostLimitAmount)
+            {
+                IsBoosting = false;
+                BoostCoolDown = 3;
+            }
+        }
+        else
+        {
+            BoostLimit =    Mathf.Clamp(BoostLimit - delta, 0, 3) ;
+            BoostCoolDown = Mathf.Clamp(BoostCoolDown - delta, 0, 3) ;
+        }
+        
         // override because start value is 0.0f
-        velocityNew.y = velocityCurrent.y + gravity * delta;
+        // velocityNew.y = velocityCurrent.y + gravity * delta;
 
         return velocityNew;
     }

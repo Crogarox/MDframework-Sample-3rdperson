@@ -1,0 +1,12 @@
+# Blender MTL File: 'space-ship-test-bones-weights.blend'
+# Material Count: 1
+
+newmtl default
+Ns 20.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.026671 0.304247 0.813333
+Ks 0.166574 0.166574 0.166574
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2

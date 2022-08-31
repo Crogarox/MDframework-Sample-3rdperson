@@ -1,6 +1,11 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://MDFramework/Example/PlayerMP.cs" type="Script" id=1]
+[ext_resource path="res://MDFramework/Example/CameraJoint.cs" type="Script" id=2]
+[ext_resource path="res://assets/3d/testship/testShip.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Textures/crosshair.png" type="Texture" id=4]
+[ext_resource path="res://MDFramework/Example/Crosshair.cs" type="Script" id=5]
+[ext_resource path="res://Shaders/outline2D_inner_outer.shader" type="Shader" id=6]
 
 [sub_resource type="CapsuleShape" id=1]
 radius = 0.5
@@ -9,8 +14,13 @@ radius = 0.5
 params_diffuse_mode = 4
 albedo_color = Color( 0.0666667, 0.686275, 0.192157, 1 )
 
-[node name="PlayerMP" type="KinematicBody"]
-collision_layer = 8
+[sub_resource type="ShaderMaterial" id=3]
+shader = ExtResource( 6 )
+shader_param/line_color = Color( 1, 1, 1, 1 )
+shader_param/line_thickness = 1.0
+
+[node name="PlayerMP" type="KinematicBody" groups=["Players"]]
+collision_layer = 9
 collision_mask = 31
 script = ExtResource( 1 )
 
@@ -25,5 +35,49 @@ height = 1.5
 sides = 16
 material = SubResource( 2 )
 
-[node name="Camera" type="Camera" parent="."]
-transform = Transform( 1, 0, 0, 0, 0.965926, 0.258819, 0, -0.258819, 0.965926, 0, 2.5, 5 )
+[node name="SpringArm" type="SpringArm" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0 )
+spring_length = 5.0
+margin = 0.2
+script = ExtResource( 2 )
+
+[node name="Camera" type="Camera" parent="SpringArm"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5 )
+fov = 90.0
+far = 1500.0
+
+[node name="testShip" parent="." instance=ExtResource( 3 )]
+transform = Transform( 0.25, 0, 0, 0, 0.25, 0, 0, 0, 0.25, 0, 2, 0 )
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="HitCounter" type="Label" parent="CanvasLayer"]
+anchor_right = 1.0
+anchor_bottom = 0.124
+margin_left = 898.0
+margin_top = 6.0
+margin_right = -10.0
+margin_bottom = -34.4
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Crosshair" type="Sprite" parent="CanvasLayer"]
+material = SubResource( 3 )
+position = Vector2( 480, 300 )
+texture = ExtResource( 4 )
+script = ExtResource( 5 )
+
+[node name="HpCounter" type="Label" parent="CanvasLayer"]
+anchor_right = 1.0
+anchor_bottom = 0.1
+margin_top = 512.0
+margin_right = -900.0
+margin_bottom = 500.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Crosshair3d" type="Sprite3D" parent="."]
+cast_shadow = 2
+texture = ExtResource( 4 )
