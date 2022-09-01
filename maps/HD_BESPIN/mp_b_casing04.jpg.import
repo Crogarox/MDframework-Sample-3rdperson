@@ -2,8 +2,8 @@
 
 importer="texture"
 type="StreamTexture"
-path.s3tc="res://.import/mp_b_casing04.jpg-3120e37a467e4f49aebba68bb9552fcc.s3tc.stex"
-path.etc2="res://.import/mp_b_casing04.jpg-3120e37a467e4f49aebba68bb9552fcc.etc2.stex"
+path.s3tc="res://.import/mp_b_casing04.jpg-a514aed6bdc584afb04df9f5af1fdb71.s3tc.stex"
+path.etc2="res://.import/mp_b_casing04.jpg-a514aed6bdc584afb04df9f5af1fdb71.etc2.stex"
 metadata={
 "imported_formats": [ "s3tc", "etc2" ],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="D:/gits/MDframework-Sample-3rdperson/maps/HD_BESPIN/mp_b_casing04.jpg"
-dest_files=[ "res://.import/mp_b_casing04.jpg-3120e37a467e4f49aebba68bb9552fcc.s3tc.stex", "res://.import/mp_b_casing04.jpg-3120e37a467e4f49aebba68bb9552fcc.etc2.stex" ]
+source_file="res://maps/HD_BESPIN/mp_b_casing04.jpg"
+dest_files=[ "res://.import/mp_b_casing04.jpg-a514aed6bdc584afb04df9f5af1fdb71.s3tc.stex", "res://.import/mp_b_casing04.jpg-a514aed6bdc584afb04df9f5af1fdb71.etc2.stex" ]
 
 [params]
 

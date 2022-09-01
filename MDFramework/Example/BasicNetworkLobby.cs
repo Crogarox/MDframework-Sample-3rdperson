@@ -106,9 +106,11 @@ public class BasicNetworkLobby : Node2D
 	{
 		if (@event.IsActionPressed("ui_cancel"))
 		{
-			if (Input.GetMouseMode() != Input.MouseMode.Visible)
+			//if (Input.GetMouseMode() != Input.MouseMode.Visible)
+			if(Input.MouseMode != Input.MouseModeEnum.Visible)
 			{
-				Input.SetMouseMode(Input.MouseMode.Visible);
+				//Input.SetMouseMode(Input.MouseMode.Visible);
+				Input.MouseMode = Input.MouseModeEnum.Visible;
 			}
 		}
 		if (@event is InputEventKey eventKey)

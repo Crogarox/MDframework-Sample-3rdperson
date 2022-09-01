@@ -2,8 +2,8 @@
 
 importer="texture"
 type="StreamTexture"
-path.s3tc="res://.import/u_metalgreen.jpg-4278002acf026e3ce526e438b6173b21.s3tc.stex"
-path.etc2="res://.import/u_metalgreen.jpg-4278002acf026e3ce526e438b6173b21.etc2.stex"
+path.s3tc="res://.import/u_metalgreen.jpg-b5077ca07e5f6a47a0e1f027971588f5.s3tc.stex"
+path.etc2="res://.import/u_metalgreen.jpg-b5077ca07e5f6a47a0e1f027971588f5.etc2.stex"
 metadata={
 "imported_formats": [ "s3tc", "etc2" ],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="D:/gits/MDframework-Sample-3rdperson/maps/HD_BESPIN/u_metalgreen.jpg"
-dest_files=[ "res://.import/u_metalgreen.jpg-4278002acf026e3ce526e438b6173b21.s3tc.stex", "res://.import/u_metalgreen.jpg-4278002acf026e3ce526e438b6173b21.etc2.stex" ]
+source_file="res://maps/HD_BESPIN/u_metalgreen.jpg"
+dest_files=[ "res://.import/u_metalgreen.jpg-b5077ca07e5f6a47a0e1f027971588f5.s3tc.stex", "res://.import/u_metalgreen.jpg-b5077ca07e5f6a47a0e1f027971588f5.etc2.stex" ]
 
 [params]
 

@@ -2,8 +2,8 @@
 
 importer="texture"
 type="StreamTexture"
-path.s3tc="res://.import/floor3.jpg-34dcba7ecc1cb6f7c3deed0c377fd102.s3tc.stex"
-path.etc2="res://.import/floor3.jpg-34dcba7ecc1cb6f7c3deed0c377fd102.etc2.stex"
+path.s3tc="res://.import/floor3.jpg-9f62d75e337e6621442af5cd2210f885.s3tc.stex"
+path.etc2="res://.import/floor3.jpg-9f62d75e337e6621442af5cd2210f885.etc2.stex"
 metadata={
 "imported_formats": [ "s3tc", "etc2" ],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="D:/gits/MDframework-Sample-3rdperson/maps/HD_BESPIN/floor3.jpg"
-dest_files=[ "res://.import/floor3.jpg-34dcba7ecc1cb6f7c3deed0c377fd102.s3tc.stex", "res://.import/floor3.jpg-34dcba7ecc1cb6f7c3deed0c377fd102.etc2.stex" ]
+source_file="res://maps/HD_BESPIN/floor3.jpg"
+dest_files=[ "res://.import/floor3.jpg-9f62d75e337e6621442af5cd2210f885.s3tc.stex", "res://.import/floor3.jpg-9f62d75e337e6621442af5cd2210f885.etc2.stex" ]
 
 [params]
 

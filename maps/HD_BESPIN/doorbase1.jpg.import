@@ -2,8 +2,8 @@
 
 importer="texture"
 type="StreamTexture"
-path.s3tc="res://.import/doorbase1.jpg-8e28bfc750fb05502cfa2c04acd3b2d1.s3tc.stex"
-path.etc2="res://.import/doorbase1.jpg-8e28bfc750fb05502cfa2c04acd3b2d1.etc2.stex"
+path.s3tc="res://.import/doorbase1.jpg-7207d673e83c115132322ca2ca44131b.s3tc.stex"
+path.etc2="res://.import/doorbase1.jpg-7207d673e83c115132322ca2ca44131b.etc2.stex"
 metadata={
 "imported_formats": [ "s3tc", "etc2" ],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="D:/gits/MDframework-Sample-3rdperson/maps/HD_BESPIN/doorbase1.jpg"
-dest_files=[ "res://.import/doorbase1.jpg-8e28bfc750fb05502cfa2c04acd3b2d1.s3tc.stex", "res://.import/doorbase1.jpg-8e28bfc750fb05502cfa2c04acd3b2d1.etc2.stex" ]
+source_file="res://maps/HD_BESPIN/doorbase1.jpg"
+dest_files=[ "res://.import/doorbase1.jpg-7207d673e83c115132322ca2ca44131b.s3tc.stex", "res://.import/doorbase1.jpg-7207d673e83c115132322ca2ca44131b.etc2.stex" ]
 
 [params]
 
